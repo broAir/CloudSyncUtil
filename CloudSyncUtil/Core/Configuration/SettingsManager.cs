@@ -26,5 +26,9 @@
         {
             return ConfigurationManager.GetSettingValue<string>("Google.FileDataStore");
         }
+        public string GoogleDefaultFetchFields()
+        {
+            return ConfigurationManager.GetSettingValue<string>("Google.FileList.FieldsToInclude");
+        }
     }
 }

@@ -21,10 +21,9 @@ namespace CloudSyncUtil
 
             var service = new GoogleCloudRepository(SettingsManager.Instance);
 
-            var f = service.CreateFolder("test shit");
-
-            Console.WriteLine(f.Name);
-
+            var f = service.DownloadFile("4_17_1.rar");
+            System.IO.File.WriteAllBytes("4_17_1.rar", f);
+            
             Console.ReadLine();
         }
     }

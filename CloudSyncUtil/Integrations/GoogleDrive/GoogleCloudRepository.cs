@@ -7,6 +7,7 @@ using CloudSyncUtil.Core.Configuration;
 using CloudSyncUtil.Core.Integrations;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
+using Google.Apis.Discovery;
 
 namespace CloudSyncUtil.Integrations.GoogleDrive
 {
@@ -14,9 +15,10 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
     {
         protected readonly SettingsManager SettingsManager;
 
-        // to make sure we dont ask for auth each time
-        private DriveService googleDriveService;
+        protected string fieldsToFetch;
 
+        // preserve sevice reference to make sure we dont ask for auth each time
+        private DriveService googleDriveService;
         protected DriveService GoogleDriveService
         {
             get
@@ -38,16 +40,24 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             this.ApiSecret = ApiKeys.GoogleApiSecret;
 
             this.UserName = this.SettingsManager.GoogleUserName();
+
+            this.fieldsToFetch = this.SettingsManager.GoogleDefaultFetchFields();
         }
 
         public override File GetFile(string fileName)
         {
-            throw new NotImplementedException();
+            var searchString = // get NOT folders NOT in trash
+                  string.Format("mimeType!='application/vnd.google-apps.folder' and trashed=false and name='{0}'",
+                      fileName);
+
+            var searchResult = this.GetFiles(searchString, 1);
+
+            return searchResult.SingleOrDefault();
         }
 
         public override File GetFolder(string folderName)
         {
-            var searchString = // get folders not in trash
+            var searchString = // get folders NOT in trash
                 string.Format("mimeType='application/vnd.google-apps.folder' and trashed=false and name='{0}'",
                     folderName);
 
@@ -58,12 +68,12 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
 
         public override bool HasFile(string fileName)
         {
-            throw new NotImplementedException();
+            return GetFile(fileName) != null ? true : false;
         }
 
         public override string GetFileMetadata(string fileName)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); 
         }
 
         public override List<File> GetFiles(string search = "", int maxResults = 0)
@@ -71,18 +81,20 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             var result = new List<File>();
 
             var list = GoogleDriveService.Files.List();
-            
+
+            list.Fields = fieldsToFetch;
+
             if (search != null)
             {
                 list.Q = search;
             }
-            
+
             var filesFeed = list.Execute();
 
             while (filesFeed.Files != null)
             {
                 result.AddRange(filesFeed.Files);
-                
+
                 // We will know we are on the last page when the next page token is null.
                 // or we reached maximum results count
                 // If this is the case, break.
@@ -93,14 +105,13 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
 
                 // Prepare the next page of results
                 list.PageToken = filesFeed.NextPageToken;
-
                 // Execute and process the next page request
                 filesFeed = list.Execute();
             }
 
             return result;
         }
-
+        
         public override bool HasFolder(string folderName)
         {
             return GetFolder(folderName) != null ? true : false;
@@ -150,7 +161,16 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
 
         public override File CreateFolderStructure(string path)
         {
-            throw new NotImplementedException();
+            var folderStringArr = path.Split('/', '\\');
+
+            File current = null;
+
+            for (int i = 0; i < folderStringArr.Length; i++)
+            {
+                current = CreateFolder(folderStringArr[i].Trim(), current);
+            }
+
+            return current;
         }
 
         public override File UploadFile(string name, File parent = default (File))
@@ -158,5 +178,22 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             throw new NotImplementedException();
         }
 
+        public override byte[] DownloadFile(string name)
+        {
+            var file = this.GetFile(name);
+            if (!String.IsNullOrEmpty(file.WebContentLink))
+            {
+                try
+                {
+                    var downloadRequest = GoogleDriveService.HttpClient.GetByteArrayAsync(file.WebContentLink);
+                    return downloadRequest.Result;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("An error occurred: " + e.Message);
+                }
+            }
+            return null;
+        }
     }
 }

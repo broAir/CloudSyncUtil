@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace CloudSyncUtil.Core.Integrations
 {
-    //http://www.daimto.com/google-drive-authentication-c/
     public abstract class CloudRepository<TFile>
     {
         protected string ApiKey { get; set; }
@@ -51,6 +50,8 @@ namespace CloudSyncUtil.Core.Integrations
         public abstract TFile CreateFolderStructure(string path);
 
         public abstract TFile UploadFile(string name, TFile parent = default (TFile));
+
+        public abstract byte[] DownloadFile(string name);
 
         public abstract List<TFile> GetFiles(string search = "", int maxResults = 0);
 
