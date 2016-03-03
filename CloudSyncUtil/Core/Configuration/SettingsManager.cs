@@ -24,11 +24,11 @@
 
         public string GoogleFileDataStore()
         {
-            return ConfigurationManager.GetSettingValue<string>("Google.FileDataStore");
+            return ConfigurationManager.GetSettingValue<string>("Advanced.Google.FileDataStore");
         }
         public string GoogleDefaultFetchFields()
         {
-            return ConfigurationManager.GetSettingValue<string>("Google.FileList.FieldsToInclude");
+            return ConfigurationManager.GetSettingValue<string>("Advanced.Google.FileList.FieldsToInclude");
         }
     }
 }
