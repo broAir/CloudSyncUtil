@@ -29,3 +29,13 @@ One asterisk (`*`) will sync ALL files UNDER <i>myfolder</i> (not including inne
 Two asterisks (`**`) will sync ALL files UNDER <i>myfolder</i> RECURSIVELY:
 
 ```<add key="Google.Files" value="D://my/myfolder/**" />```
+
+### Advanced
+
+There is a number of advanced configuration options that probably should not be changed. 
+
+All those options are documented inside the App.config file.
+
+Make sure that you know what you doing when you change them. 
+
+Personally, I don't see a scenario when you ever will need to change those. 
