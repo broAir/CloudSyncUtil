@@ -8,10 +8,11 @@ namespace CloudSyncUtil.Core.Pipelines
 {
     public abstract class Pipeline<TArgs> where TArgs : PipelineArgs
     {
+        private TaskFactory taskFactory = new TaskFactory(TaskCreationOptions.LongRunning, TaskContinuationOptions.None);
         protected List<Processor<TArgs>> Processors;
-
-        public bool IsRunning { get; protected set; }
-        public bool PendingCancel { get; protected set; }
+        
+        public bool IsRunning = false;
+        public bool PendingCancel = false;
 
         protected Pipeline(List<Processor<TArgs>> processors = null)
         {
@@ -25,15 +26,18 @@ namespace CloudSyncUtil.Core.Pipelines
             Processors = Processors.OrderBy(x => x.Priority).ToList();
         }
 
-        public virtual void Run(TArgs args)
+        protected virtual async void Run(TArgs args)
         {
+            if (IsRunning)
+                return;
+
             IsRunning = true;
 
             foreach (var processor in Processors)
             {
                 if (!PendingCancel)
                 {
-                    processor.Process(args);
+                    await taskFactory.StartNew(()=> processor.Process(args));
                 }
                 else
                 {
@@ -44,7 +48,13 @@ namespace CloudSyncUtil.Core.Pipelines
         
             IsRunning = false;
         }
-
+        public virtual async Task RunAsync(TArgs args)
+        {
+            if (!IsRunning)
+            {
+                await taskFactory.StartNew(() => Run(args));
+            }
+        }
         public virtual void Abort()
         {
             PendingCancel = true;

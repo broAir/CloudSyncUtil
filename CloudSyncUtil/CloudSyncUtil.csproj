@@ -108,6 +108,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\Pipelines\Sync.GoogleDrive\GoogleSyncArgs.cs" />
+    <Compile Include="App\Pipelines\Sync.GoogleDrive\Processors\EnsureAuth.cs" />
+    <Compile Include="App\Pipelines\Sync.GoogleDrive\Processors\GoogleSyncProcessor.cs" />
     <Compile Include="Core\Configuration\SettingsManager.cs" />
     <Compile Include="Core\Configuration\ConfigurationManager.cs" />
     <Compile Include="Core\FileSystem\FileConverter.cs" />
@@ -131,9 +134,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>
