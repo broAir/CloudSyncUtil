@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CloudSyncUtil.Core.Pipelines
 {
-    public abstract class Processor<TArgs> where TArgs : PipelineArgs
+    public abstract class Processor<TArgs> where TArgs:PipelineArgs
     {
         public int Priority { get; set; }
 

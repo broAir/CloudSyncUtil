@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CloudSyncUtil.App.Pipelines.Sync.GoogleDrive
 {
-    public class GoogleSyncArgs:CloudSyncPipelineArgs<GoogleCloudRepository, Google.Apis.Drive.v3.Data.File>
+    public class GoogleSyncArgs:CloudSyncPipelineArgs
     {
     }
 }

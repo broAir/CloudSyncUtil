@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CloudSyncUtil.Core.Integrations
 {
-    public abstract class CloudRepository<TFile>
+    public abstract class CloudRepository
     {
         protected string ApiKey { get; set; }
 
@@ -17,12 +17,14 @@ namespace CloudSyncUtil.Core.Integrations
 
         protected string UserName { get; set; }
 
+        protected IFileMapper FileMapper;
 
         protected IAuthorizationProvider AuthorizationProvider;
 
-        protected CloudRepository(IAuthorizationProvider authorizationProvider)
+        protected CloudRepository(IAuthorizationProvider authorizationProvider, IFileMapper fileMapper)
         {
             this.AuthorizationProvider = authorizationProvider;
+            this.FileMapper = fileMapper;
         }
 
         public virtual object Authorize()
@@ -30,14 +32,14 @@ namespace CloudSyncUtil.Core.Integrations
             return AuthorizationProvider.Authorize(UserName, ApiKey, ApiSecret);
         }
 
-        public virtual TFile GetRepositoryMetadata()
+        public virtual CloudFile GetRepositoryMetadata()
         {
             return GetFile(RepositoryMetadataFileName);
         }
 
-        public abstract TFile GetFile(string fileName);
+        public abstract CloudFile GetFile(string fileName);
 
-        public abstract TFile GetFolder(string folderName);
+        public abstract CloudFile GetFolder(string folderName);
 
         public abstract bool HasFile(string fileName);
 
@@ -45,15 +47,15 @@ namespace CloudSyncUtil.Core.Integrations
 
         public abstract bool HasFolder(string folderName);
         
-        public abstract TFile CreateFolder(string name, TFile parent = default(TFile));
+        public abstract CloudFile CreateFolder(string name, CloudFile parent = null);
 
-        public abstract TFile CreateFolderStructure(string path);
+        public abstract CloudFile CreateFolderStructure(string path);
 
-        public abstract TFile UploadFile(string name, TFile parent = default (TFile));
+        public abstract CloudFile UploadFile(string name, CloudFile parent = null);
 
         public abstract byte[] DownloadFile(string name);
 
-        public abstract List<TFile> GetFiles(string search = "", int maxResults = 0);
-
+        public abstract List<CloudFile> GetFiles(string search = "", int maxResults = 0);
+        
     }
 }

@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace CloudSyncUtil.Core.Integrations
 {
-    [Flags]
-    public enum AccessOptions
+    public interface IFileMapper
     {
-        None = 0,
-        ReadMetadata = 1,
-        ReadFile = 2,
-        UploadFile = 4
+        CloudFile MapToFile(object innerFile);
+
+        List<CloudFile> MapMany(List<object> inners);
     }
 }

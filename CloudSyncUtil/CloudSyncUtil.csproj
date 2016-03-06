@@ -109,23 +109,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\Pipelines\CloudSyncPipelineArgs.cs" />
+    <Compile Include="App\Pipelines\Sync.Common\CommonSyncProcessor.cs" />
     <Compile Include="App\Pipelines\Sync.GoogleDrive\GoogleSyncArgs.cs" />
-    <Compile Include="App\Pipelines\Sync.GoogleDrive\Processors\EnsureAuth.cs" />
+    <Compile Include="App\Pipelines\Sync.Common\EnsureAuth.cs" />
     <Compile Include="App\Pipelines\Sync.GoogleDrive\Processors\GoogleSyncProcessor.cs" />
     <Compile Include="Core\Configuration\SettingsManager.cs" />
     <Compile Include="Core\Configuration\ConfigurationManager.cs" />
     <Compile Include="Core\FileSystem\FileConverter.cs" />
-    <Compile Include="Core\Integrations\AccessOptions.cs" />
     <Compile Include="Core\Integrations\ApiKeys.cs" />
     <Compile Include="Core\Integrations\ApiKeys.Local.cs" />
+    <Compile Include="Core\Integrations\CloudFile.cs" />
     <Compile Include="Core\Integrations\IAuthorizationProvider.cs" />
     <Compile Include="Core\Integrations\CloudRepository.cs" />
+    <Compile Include="Core\Integrations\IFileMapper.cs" />
     <Compile Include="Core\Pipelines\Pipeline.cs" />
     <Compile Include="Core\Pipelines\PipelineArgs.cs" />
     <Compile Include="Core\Pipelines\Processor.cs" />
     <Compile Include="Core\Sync\RepositoryMetadata.cs" />
     <Compile Include="Integrations\GoogleDrive\GoogleAuthorizationProvider.cs" />
     <Compile Include="Integrations\GoogleDrive\GoogleCloudRepository.cs" />
+    <Compile Include="Integrations\GoogleDrive\GoogleFileMapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

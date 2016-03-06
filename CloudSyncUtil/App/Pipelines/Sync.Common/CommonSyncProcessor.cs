@@ -6,10 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CloudSyncUtil.App.Pipelines
-{s
-    public class CloudSyncPipelineArgs:PipelineArgs
+namespace CloudSyncUtil.App.Pipelines.Sync.Common
+{
+    public abstract class CommonSyncProcessor: Processor<CloudSyncPipelineArgs>
     {
-        public CloudRepository Repository { get; set; }
     }
 }

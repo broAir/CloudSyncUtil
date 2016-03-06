@@ -11,7 +11,7 @@ using Google.Apis.Discovery;
 
 namespace CloudSyncUtil.Integrations.GoogleDrive
 {
-    public class GoogleCloudRepository:CloudRepository<File>
+    public class GoogleCloudRepository:CloudRepository
     {
         protected readonly SettingsManager SettingsManager;
 
@@ -37,7 +37,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
         }
 
         public GoogleCloudRepository(SettingsManager settingsManager)
-            : base(new GoogleAuthorizationProvider(settingsManager))
+            : base(new GoogleAuthorizationProvider(settingsManager), new GoogleFileMapper())
         {
             this.SettingsManager = settingsManager;
             
@@ -49,7 +49,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             this.fieldsToFetch = this.SettingsManager.GoogleDefaultFetchFields();
         }
 
-        public override File GetFile(string fileName)
+        public override CloudFile GetFile(string fileName)
         {
             var searchString = // get NOT folders NOT in trash
                   string.Format("mimeType!='application/vnd.google-apps.folder' and trashed=false and name='{0}'",
@@ -60,7 +60,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             return searchResult.SingleOrDefault();
         }
 
-        public override File GetFolder(string folderName)
+        public override CloudFile GetFolder(string folderName)
         {
             var searchString = // get folders NOT in trash
                 string.Format("mimeType='application/vnd.google-apps.folder' and trashed=false and name='{0}'",
@@ -81,9 +81,9 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             throw new NotImplementedException(); 
         }
 
-        public override List<File> GetFiles(string search = "", int maxResults = 0)
+        public override List<CloudFile> GetFiles(string search = "", int maxResults = 0)
         {
-            var result = new List<File>();
+            var result = new List<CloudFile>();
 
             var list = GoogleDriveService.Files.List();
 
@@ -98,7 +98,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
 
             while (filesFeed.Files != null)
             {
-                result.AddRange(filesFeed.Files);
+                result.AddRange(this.FileMapper.MapMany(filesFeed.Files.ToList<object>()));
 
                 // We will know we are on the last page when the next page token is null.
                 // or we reached maximum results count
@@ -122,9 +122,9 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             return GetFolder(folderName) != null ? true : false;
         }
 
-        public override File CreateFolder(string name, File parent = default(File))
+        public override CloudFile CreateFolder(string name, CloudFile parent = null)
         {
-            File newDir = null;
+            CloudFile newDir = null;
 
             // Create metaData for a new Directory
             File body = new File();
@@ -148,7 +148,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
                     request.Fields = "id";
                     request.Fields = "name";
                     
-                    newDir = request.Execute();
+                    newDir = this.FileMapper.MapToFile(request.Execute());
                 }
                 else
                 {
@@ -164,11 +164,11 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             return newDir;
         }
 
-        public override File CreateFolderStructure(string path)
+        public override CloudFile CreateFolderStructure(string path)
         {
             var folderStringArr = path.Split('/', '\\');
 
-            File current = null;
+            CloudFile current = null;
 
             for (int i = 0; i < folderStringArr.Length; i++)
             {
@@ -178,14 +178,14 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             return current;
         }
 
-        public override File UploadFile(string name, File parent = default (File))
+        public override CloudFile UploadFile(string name, CloudFile parent = null)
         {
             throw new NotImplementedException();
         }
 
         public override byte[] DownloadFile(string name)
         {
-            var file = this.GetFile(name);
+            var file = this.GetFile(name).InnerFile as File;
             if (!String.IsNullOrEmpty(file.WebContentLink))
             {
                 try
