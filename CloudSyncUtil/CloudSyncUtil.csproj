@@ -108,6 +108,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\Pipelines\CloudSyncPipelineArgs.cs" />
     <Compile Include="App\Pipelines\Sync.GoogleDrive\GoogleSyncArgs.cs" />
     <Compile Include="App\Pipelines\Sync.GoogleDrive\Processors\EnsureAuth.cs" />
     <Compile Include="App\Pipelines\Sync.GoogleDrive\Processors\GoogleSyncProcessor.cs" />

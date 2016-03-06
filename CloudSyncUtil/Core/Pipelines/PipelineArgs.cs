@@ -9,5 +9,7 @@ namespace CloudSyncUtil.Core.Pipelines
     public class PipelineArgs
     {
         public bool Cancel { get; set; }
+
+        public int ExitCode { get; set; }
     }
 }

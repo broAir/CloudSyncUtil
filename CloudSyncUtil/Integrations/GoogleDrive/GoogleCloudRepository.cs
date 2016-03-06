@@ -31,6 +31,11 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             }
         }
 
+        public GoogleCloudRepository():this(SettingsManager.Instance)
+        {
+
+        }
+
         public GoogleCloudRepository(SettingsManager settingsManager)
             : base(new GoogleAuthorizationProvider(settingsManager))
         {
