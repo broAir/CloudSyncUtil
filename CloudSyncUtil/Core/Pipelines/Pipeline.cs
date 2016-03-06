@@ -26,10 +26,10 @@ namespace CloudSyncUtil.Core.Pipelines
             Processors = Processors.OrderBy(x => x.Priority).ToList();
         }
 
-        protected virtual async void Run(TArgs args)
+        protected virtual async Task<int> Run(TArgs args)
         {
             if (IsRunning)
-                return;
+                return 1;
 
             IsRunning = true;
 
@@ -47,14 +47,10 @@ namespace CloudSyncUtil.Core.Pipelines
             }
         
             IsRunning = false;
+
+            return args.ExitCode;
         }
-        public virtual async Task RunAsync(TArgs args)
-        {
-            if (!IsRunning)
-            {
-                await taskFactory.StartNew(() => Run(args));
-            }
-        }
+
         public virtual void Abort()
         {
             PendingCancel = true;
