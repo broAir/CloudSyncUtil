@@ -73,7 +73,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
 
         public override bool HasFile(string fileName)
         {
-            return GetFile(fileName) != null ? true : false;
+            return this.GetFile(fileName) != null ? true : false;
         }
 
         public override string GetFileMetadata(string fileName)
@@ -119,7 +119,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
         
         public override bool HasFolder(string folderName)
         {
-            return GetFolder(folderName) != null ? true : false;
+            return this.GetFolder(folderName) != null ? true : false;
         }
 
         public override CloudFile CreateFolder(string name, CloudFile parent = null)
@@ -186,7 +186,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
         public override byte[] DownloadFile(string name)
         {
             var file = this.GetFile(name).InnerFile as File;
-            if (!String.IsNullOrEmpty(file.WebContentLink))
+            if (file!=null && !string.IsNullOrEmpty(file.WebContentLink))
             {
                 try
                 {

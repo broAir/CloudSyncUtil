@@ -19,7 +19,11 @@
         public string GoogleUserName()
         {
             return ConfigurationManager.GetSettingValue<string>("Google.UserName");
-            
+        }
+
+        public string GoogleFileList()
+        {
+            return ConfigurationManager.GetSettingValue<string>("Google.Files");
         }
 
         public string GoogleFileDataStore()

@@ -7,9 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CloudSyncUtil.App.Pipelines
-{s
-    public class CloudSyncPipelineArgs:PipelineArgs
+{
+    public class CloudSyncPipelineArgs : PipelineArgs
     {
         public CloudRepository Repository { get; set; }
+
+        public string FilesSyncSettingValue { get; set; }
+
+        public Dictionary<string, string> StringFileMap { get; set; }
+
+        public Dictionary<CloudFile, string> CloudToStringMap { get; set; } 
     }
 }

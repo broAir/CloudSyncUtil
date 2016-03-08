@@ -109,7 +109,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\Pipelines\CloudSyncPipelineArgs.cs" />
+    <Compile Include="App\Pipelines\Sync.Common\CollectSingleWildcards.cs" />
     <Compile Include="App\Pipelines\Sync.Common\CommonSyncProcessor.cs" />
+    <Compile Include="App\Pipelines\Sync.Common\CreateCloudFolders.cs" />
+    <Compile Include="App\Pipelines\Sync.Common\ParseFilePaths.cs" />
     <Compile Include="App\Pipelines\Sync.GoogleDrive\GoogleSyncArgs.cs" />
     <Compile Include="App\Pipelines\Sync.Common\EnsureAuth.cs" />
     <Compile Include="App\Pipelines\Sync.GoogleDrive\Processors\GoogleSyncProcessor.cs" />

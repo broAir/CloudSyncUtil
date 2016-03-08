@@ -17,6 +17,14 @@ namespace CloudSyncUtil.Core.Pipelines
             Priority = priority;
         }
 
+        // to set up error code and args.cancel
+        protected virtual void Cancel(TArgs args)
+        {
+            args.Cancel = true;
+            // generic error
+            args.ExitCode = 999;
+        }
+
         protected abstract void DoProcess(TArgs args);
 
         public virtual void Process(TArgs args)
