@@ -24,16 +24,7 @@ namespace CloudSyncUtil.Core.Integrations
         {
             this.InnerFile = inner;
         }
-
-        public static bool operator ==(CloudFile one, CloudFile other)
-        {
-            return one.MD5Checksum == other.MD5Checksum;
-        }
-
-        public static bool operator !=(CloudFile one, CloudFile other)
-        {
-            return one.MD5Checksum != other.MD5Checksum;
-        }
+        
 
         public bool IsNewer(CloudFile other)
         {

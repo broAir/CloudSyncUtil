@@ -196,8 +196,14 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
 
         public override byte[] DownloadFile(string name)
         {
-            var file = this.GetFile(name).InnerFile as File;
-            if (file!=null && !string.IsNullOrEmpty(file.WebContentLink))
+            var cloudFile = this.GetFile(name);
+
+            if (cloudFile == null)
+                return null;
+
+            var file = cloudFile.InnerFile as File;
+
+            if (file != null && !string.IsNullOrEmpty(file.WebContentLink))
             {
                 try
                 {
@@ -237,7 +243,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
                 Name = file.Name,
                 Description = "Uploaded by CloudSyncUtil",
                 MimeType = this.GetMimeType(file.Extension),
-                Parents = new List<string> { parent.Id }
+                Parents = parent != null ? new List<string> { parent.Id } : null
             };
 
             var byteArray = System.IO.File.ReadAllBytes(file.FullPath);
@@ -259,7 +265,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
                 Name = file.Name,
                 Description = "Uploaded by CloudSyncUtil",
                 MimeType = this.GetMimeType(file.Extension),
-                Parents = new List<string> { parent.Id }
+                Parents = parent != null ? new List<string> { parent.Id } : null
             };
 
             var byteArray = System.IO.File.ReadAllBytes(file.FullPath);

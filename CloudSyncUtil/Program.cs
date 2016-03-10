@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CloudSyncUtil.Core.Configuration;
 using CloudSyncUtil.Integrations.GoogleDrive;
 using CloudSyncUtil.Core.Integrations;
+using CloudSyncUtil.Core.FileSystem;
 
 namespace CloudSyncUtil
 {
@@ -21,9 +22,9 @@ namespace CloudSyncUtil
 
             var service = new GoogleCloudRepository(SettingsManager.Instance);
 
-            var f = service.DownloadFile("4_17_1.rar");
-            System.IO.File.WriteAllBytes("4_17_1.rar", f);
-            
+            //var f = service.UploadFile(FileFactory.Instance.GetFile(@"D:\RK.rar"));
+
+            var f = service.DownloadFile("RK.rar");
             Console.ReadLine();
         }
     }
