@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CloudSyncUtil.Core.FileSystem;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -37,25 +38,27 @@ namespace CloudSyncUtil.Core.Integrations
             return GetFile(RepositoryMetadataFileName);
         }
 
-        public abstract CloudFile GetFile(string fileName);
+        public abstract CloudFile GetFile(string fileName, CloudFile parent = null);
 
-        public abstract CloudFile GetFolder(string folderName);
+        public abstract CloudFile GetFolder(string folderName, CloudFile parent = null);
 
-        public abstract bool HasFile(string fileName);
+        public abstract bool HasFile(string fileName, CloudFile parent = null);
 
         public abstract string GetFileMetadata(string fileName);
 
-        public abstract bool HasFolder(string folderName);
-        
+        public abstract bool HasFolder(string folderName, CloudFile parent = null);
+
         public abstract CloudFile CreateFolder(string name, CloudFile parent = null);
 
         public abstract CloudFile CreateFolderStructure(string path);
 
-        public abstract CloudFile UploadFile(string name, CloudFile parent = null);
+        public abstract CloudFile UploadFile(LocalFile file, CloudFile parent = null);
+
+        public abstract CloudFile UpdateFile(CloudFile fileOnCloud, LocalFile file, CloudFile parent = null);
 
         public abstract byte[] DownloadFile(string name);
 
         public abstract List<CloudFile> GetFiles(string search = "", int maxResults = 0);
-        
+
     }
 }

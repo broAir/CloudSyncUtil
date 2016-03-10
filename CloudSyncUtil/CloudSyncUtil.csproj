@@ -118,13 +118,16 @@
     <Compile Include="App\Pipelines\Sync.GoogleDrive\Processors\GoogleSyncProcessor.cs" />
     <Compile Include="Core\Configuration\SettingsManager.cs" />
     <Compile Include="Core\Configuration\ConfigurationManager.cs" />
-    <Compile Include="Core\FileSystem\FileConverter.cs" />
+    <Compile Include="Core\FileSystem\FileFactory.cs" />
+    <Compile Include="Core\FileSystem\FileNameStringOperations.cs" />
+    <Compile Include="Core\FileSystem\IOManager.cs" />
     <Compile Include="Core\Integrations\ApiKeys.cs" />
     <Compile Include="Core\Integrations\ApiKeys.Local.cs" />
     <Compile Include="Core\Integrations\CloudFile.cs" />
     <Compile Include="Core\Integrations\IAuthorizationProvider.cs" />
     <Compile Include="Core\Integrations\CloudRepository.cs" />
     <Compile Include="Core\Integrations\IFileMapper.cs" />
+    <Compile Include="Core\FileSystem\LocalFile.cs" />
     <Compile Include="Core\Pipelines\Pipeline.cs" />
     <Compile Include="Core\Pipelines\PipelineArgs.cs" />
     <Compile Include="Core\Pipelines\Processor.cs" />

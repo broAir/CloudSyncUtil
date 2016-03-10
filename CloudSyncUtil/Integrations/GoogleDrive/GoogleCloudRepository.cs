@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CloudSyncUtil.Core.Configuration;
 using CloudSyncUtil.Core.Integrations;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
-using Google.Apis.Discovery;
+using CloudSyncUtil.Core.FileSystem;
 
 namespace CloudSyncUtil.Integrations.GoogleDrive
 {
@@ -49,31 +47,36 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             this.fieldsToFetch = this.SettingsManager.GoogleDefaultFetchFields();
         }
 
-        public override CloudFile GetFile(string fileName)
+        public override CloudFile GetFile(string fileName, CloudFile parent = null)
         {
             var searchString = // get NOT folders NOT in trash
                   string.Format("mimeType!='application/vnd.google-apps.folder' and trashed=false and name='{0}'",
                       fileName);
+            if (parent != null)
+                searchString += string.Format(" and '{0}' in parents", parent.Id);
 
             var searchResult = this.GetFiles(searchString, 1);
 
             return searchResult.SingleOrDefault();
         }
 
-        public override CloudFile GetFolder(string folderName)
+        public override CloudFile GetFolder(string folderName, CloudFile parent = null)
         {
             var searchString = // get folders NOT in trash
                 string.Format("mimeType='application/vnd.google-apps.folder' and trashed=false and name='{0}'",
                     folderName);
 
+            if (parent != null)
+                searchString += string.Format(" and '{0}' in parents", parent.Id);
+
             var searchResult = this.GetFiles(searchString, 1);
 
             return searchResult.SingleOrDefault();
         }
 
-        public override bool HasFile(string fileName)
+        public override bool HasFile(string fileName, CloudFile parent = null)
         {
-            return this.GetFile(fileName) != null ? true : false;
+            return this.GetFile(fileName, parent) != null ? true : false;
         }
 
         public override string GetFileMetadata(string fileName)
@@ -117,9 +120,9 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             return result;
         }
         
-        public override bool HasFolder(string folderName)
+        public override bool HasFolder(string folderName, CloudFile parent = null)
         {
-            return this.GetFolder(folderName) != null ? true : false;
+            return this.GetFolder(folderName, parent) != null ? true : false;
         }
 
         public override CloudFile CreateFolder(string name, CloudFile parent = null)
@@ -140,7 +143,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
 
             try
             {
-                if (!this.HasFolder(name))
+                if (!this.HasFolder(name, parent))
                 {
                     var request = GoogleDriveService.Files.Create(body);
                     
@@ -152,7 +155,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
                 }
                 else
                 {
-                    return this.GetFolder(name);
+                    return this.GetFolder(name, parent);
                 }
                     
             }
@@ -177,10 +180,18 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
 
             return current;
         }
+        
 
-        public override CloudFile UploadFile(string name, CloudFile parent = null)
+        private string GetMimeType(string extension)
         {
-            throw new NotImplementedException();
+            var mimeType = "application/unknown";
+
+            var regKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(extension);
+
+            if (regKey != null && regKey.GetValue("Content Type") != null)
+                mimeType = regKey.GetValue("Content Type").ToString();
+
+            return mimeType;
         }
 
         public override byte[] DownloadFile(string name)
@@ -198,6 +209,69 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
                     Console.WriteLine("An error occurred: " + e.Message);
                 }
             }
+            return null;
+        }
+
+        public override CloudFile UploadFile(LocalFile file, CloudFile parent = null)
+        {
+            if (file == null)
+                return null;
+
+            if (this.HasFile(file.Name, parent))
+            {
+                var fileOnDrive = this.FileMapper.MapToFile(this.GetFile(file.Name, parent));
+
+                if (fileOnDrive.MD5Checksum == file.MD5Checksum)
+                {
+                    return fileOnDrive;
+                }
+                else
+                {
+                    return this.UpdateFile(fileOnDrive, file, parent);
+                }
+
+            }
+
+            var body = new File
+            {
+                Name = file.Name,
+                Description = "Uploaded by CloudSyncUtil",
+                MimeType = this.GetMimeType(file.Extension),
+                Parents = new List<string> { parent.Id }
+            };
+
+            var byteArray = System.IO.File.ReadAllBytes(file.FullPath);
+
+            using (var stream = new System.IO.MemoryStream(byteArray))
+            {
+                var request = googleDriveService.Files.Create(body, stream, body.MimeType);
+                request.Upload();
+
+                return this.FileMapper.MapToFile(request.ResponseBody);
+            }
+            return null;
+        }
+
+        public override CloudFile UpdateFile(CloudFile fileOnCloud, LocalFile file, CloudFile parent = null)
+        {
+            var body = new File
+            {
+                Name = file.Name,
+                Description = "Uploaded by CloudSyncUtil",
+                MimeType = this.GetMimeType(file.Extension),
+                Parents = new List<string> { parent.Id }
+            };
+
+            var byteArray = System.IO.File.ReadAllBytes(file.FullPath);
+
+            using (var stream = new System.IO.MemoryStream(byteArray))
+            {
+                var request = this.googleDriveService.Files.Update(body, fileOnCloud.Id, stream, body.MimeType);
+                request.Upload();
+
+                return this.FileMapper.MapToFile(request.ResponseBody);
+            }
+
             return null;
         }
     }
