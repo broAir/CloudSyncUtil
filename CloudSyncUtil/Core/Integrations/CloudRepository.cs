@@ -1,4 +1,4 @@
-﻿using CloudSyncUtil.Core.FileSystem;
+﻿using CloudSyncUtil.Core.Files;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,7 +50,23 @@ namespace CloudSyncUtil.Core.Integrations
 
         public abstract CloudFile CreateFolder(string name, CloudFile parent = null);
 
-        public abstract CloudFile CreateFolderStructure(string path);
+        public virtual CloudFile CreateFolderStructure(string path, CloudFile parent = null)
+        {
+            var folderStringArr = path.Split('/', '\\');
+
+            CloudFile current = parent;
+
+            for (int i = 0; i < folderStringArr.Length; i++)
+            {
+                var folderName = folderStringArr[i].Trim();
+                if (!string.IsNullOrEmpty(folderName))
+                {
+                    current = CreateFolder(folderName, current);
+                }
+            }
+
+            return current;
+        }
 
         public abstract CloudFile UploadFile(LocalFile file, CloudFile parent = null);
 

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using CloudSyncUtil.Core.FileSystem;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CloudSyncUtil.Core.FileSystem
+namespace CloudSyncUtil.Core.Files
 {
     public class FileFactory
     {

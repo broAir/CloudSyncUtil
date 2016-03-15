@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 
 namespace CloudSyncUtil.App.Pipelines.Sync.Common
 {
-    public abstract class CommonSyncProcessor: Processor<CloudSyncPipelineArgs>
+    public abstract class CommonSyncProcessor : Processor<CloudSyncPipelineArgs>
     {
+        protected CommonSyncProcessor() : base() { }
+
+        protected CommonSyncProcessor(int priority) : base(priority) { }
     }
 }

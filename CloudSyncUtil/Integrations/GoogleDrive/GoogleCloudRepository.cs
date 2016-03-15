@@ -5,7 +5,7 @@ using CloudSyncUtil.Core.Configuration;
 using CloudSyncUtil.Core.Integrations;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
-using CloudSyncUtil.Core.FileSystem;
+using CloudSyncUtil.Core.Files;
 
 namespace CloudSyncUtil.Integrations.GoogleDrive
 {
@@ -148,8 +148,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
                     var request = GoogleDriveService.Files.Create(body);
                     
                     // fields that we need in future
-                    request.Fields = "id";
-                    request.Fields = "name";
+                    request.Fields = "id,name";
                     
                     newDir = this.FileMapper.MapToFile(request.Execute());
                 }
@@ -165,20 +164,6 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             }
 
             return newDir;
-        }
-
-        public override CloudFile CreateFolderStructure(string path)
-        {
-            var folderStringArr = path.Split('/', '\\');
-
-            CloudFile current = null;
-
-            for (int i = 0; i < folderStringArr.Length; i++)
-            {
-                current = CreateFolder(folderStringArr[i].Trim(), current);
-            }
-
-            return current;
         }
         
 
@@ -263,7 +248,7 @@ namespace CloudSyncUtil.Integrations.GoogleDrive
             var body = new File
             {
                 Name = file.Name,
-                Description = "Uploaded by CloudSyncUtil",
+                Description = "Updated by CloudSyncUtil",
                 MimeType = this.GetMimeType(file.Extension),
                 Parents = parent != null ? new List<string> { parent.Id } : null
             };

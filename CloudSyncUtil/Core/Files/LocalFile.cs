@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CloudSyncUtil.Core.FileSystem
+namespace CloudSyncUtil.Core.Files
 {
     public class LocalFile
     {

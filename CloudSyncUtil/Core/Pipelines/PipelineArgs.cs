@@ -11,5 +11,9 @@ namespace CloudSyncUtil.Core.Pipelines
         public bool Cancel { get; set; }
 
         public int ExitCode { get; set; }
+
+        public Exception Exception { get; set; }
+
+        public bool HasException { get; set; }
     }
 }

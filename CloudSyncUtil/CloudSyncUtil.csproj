@@ -109,16 +109,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\Pipelines\CloudSyncPipelineArgs.cs" />
-    <Compile Include="App\Pipelines\Sync.Common\CollectSingleWildcards.cs" />
+    <Compile Include="App\Pipelines\PipelineFactory.cs" />
+    <Compile Include="App\Pipelines\Sync.Common\EnsureSyncFolder.cs" />
+    <Compile Include="App\Pipelines\Sync.Common\ProcessSingleWildcards.cs" />
     <Compile Include="App\Pipelines\Sync.Common\CommonSyncProcessor.cs" />
     <Compile Include="App\Pipelines\Sync.Common\CreateCloudFolders.cs" />
     <Compile Include="App\Pipelines\Sync.Common\ParseFilePaths.cs" />
+    <Compile Include="App\Pipelines\Sync.GoogleDrive\GoogleDriveSyncPipeline.cs" />
     <Compile Include="App\Pipelines\Sync.GoogleDrive\GoogleSyncArgs.cs" />
     <Compile Include="App\Pipelines\Sync.Common\EnsureAuth.cs" />
     <Compile Include="App\Pipelines\Sync.GoogleDrive\Processors\GoogleSyncProcessor.cs" />
     <Compile Include="Core\Configuration\SettingsManager.cs" />
     <Compile Include="Core\Configuration\ConfigurationManager.cs" />
-    <Compile Include="Core\FileSystem\FileFactory.cs" />
+    <Compile Include="Core\Files\FileFactory.cs" />
     <Compile Include="Core\FileSystem\FileNameStringOperations.cs" />
     <Compile Include="Core\FileSystem\IOManager.cs" />
     <Compile Include="Core\Integrations\ApiKeys.cs" />
@@ -127,7 +130,7 @@
     <Compile Include="Core\Integrations\IAuthorizationProvider.cs" />
     <Compile Include="Core\Integrations\CloudRepository.cs" />
     <Compile Include="Core\Integrations\IFileMapper.cs" />
-    <Compile Include="Core\FileSystem\LocalFile.cs" />
+    <Compile Include="Core\Files\LocalFile.cs" />
     <Compile Include="Core\Pipelines\Pipeline.cs" />
     <Compile Include="Core\Pipelines\PipelineArgs.cs" />
     <Compile Include="Core\Pipelines\Processor.cs" />
@@ -141,6 +144,12 @@
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="App.Debug.config">
+      <DependentUpon>App.config</DependentUpon>
+    </None>
+    <None Include="App.Release.config">
+      <DependentUpon>App.config</DependentUpon>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
@@ -172,4 +181,24 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Web\Microsoft.Web.Publishing.Tasks.dll" />
+  <Target Name="AfterCompile" Condition="Exists('App.$(Configuration).config')">
+    <!--Generate transformed app config in the intermediate directory-->
+    <TransformXml Source="App.config" Destination="$(IntermediateOutputPath)$(TargetFileName).config" Transform="App.$(Configuration).config" />
+    <!--Force build process to use the transformed configuration file from now on.-->
+    <ItemGroup>
+      <AppConfigWithTargetPath Remove="App.config" />
+      <AppConfigWithTargetPath Include="$(IntermediateOutputPath)$(TargetFileName).config">
+        <TargetPath>$(TargetFileName).config</TargetPath>
+      </AppConfigWithTargetPath>
+    </ItemGroup>
+  </Target>
+  <!--Override After Publish to support ClickOnce AfterPublish. Target replaces the untransformed config file copied to the deployment directory with the transformed one.-->
+  <Target Name="AfterPublish">
+    <PropertyGroup>
+      <DeployedConfig>$(_DeploymentApplicationDir)$(TargetName)$(TargetExt).config$(_DeploymentFileMappingExtension)</DeployedConfig>
+    </PropertyGroup>
+    <!--Publish copies the untransformed App.config to deployment directory so overwrite it-->
+    <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
+  </Target>
 </Project>

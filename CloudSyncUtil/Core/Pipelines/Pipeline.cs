@@ -26,7 +26,7 @@ namespace CloudSyncUtil.Core.Pipelines
             Processors = Processors.OrderBy(x => x.Priority).ToList();
         }
 
-        protected virtual async Task<int> Run(TArgs args)
+        public virtual async Task<int> Run(TArgs args)
         {
             if (IsRunning)
                 return 1;

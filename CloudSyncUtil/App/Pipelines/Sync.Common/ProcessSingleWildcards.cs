@@ -1,4 +1,4 @@
-﻿using CloudSyncUtil.Core.FileSystem;
+﻿using CloudSyncUtil.Core.Files;
 using CloudSyncUtil.Core.Integrations;
 using System;
 using System.Collections.Generic;
@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace CloudSyncUtil.App.Pipelines.Sync.Common
 {
-    public class CollectSingleWildcards:CommonSyncProcessor
+    public class ProcessSingleWildcards : CommonSyncProcessor
     {
         protected CloudRepository CloudRepository;
+
+        public ProcessSingleWildcards(int priority = 500) : base(priority) { }
 
         protected override void DoProcess(CloudSyncPipelineArgs args)
         {
@@ -30,7 +32,7 @@ namespace CloudSyncUtil.App.Pipelines.Sync.Common
         {
             try
             {
-                var fsPath = wildcardPath.Value;
+                var fsPath = wildcardPath.Value.TrimEnd(new[] { '*' });
                 var cloudFolder = wildcardPath.Key;
 
                 var files = Directory.GetFiles(fsPath);

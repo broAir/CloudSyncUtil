@@ -12,6 +12,10 @@ namespace CloudSyncUtil.App.Pipelines
     {
         public CloudRepository Repository { get; set; }
 
+        public string SyncRootFolderName { get; set; }
+
+        public CloudFile SyncRootFolder { get; set; }
+
         public string FilesSyncSettingValue { get; set; }
 
         public Dictionary<string, string> StringFileMap { get; set; }

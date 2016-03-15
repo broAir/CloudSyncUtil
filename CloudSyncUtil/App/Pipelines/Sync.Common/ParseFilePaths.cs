@@ -7,11 +7,13 @@ using CloudSyncUtil.Core.Configuration;
 
 namespace CloudSyncUtil.App.Pipelines.Sync.Common
 {
-    public class ParseFilePaths:CommonSyncProcessor
+    public class ParseFilePaths : CommonSyncProcessor
     {
-        protected override void Cancel(CloudSyncPipelineArgs args)
+        public ParseFilePaths(int priority = 300) : base(priority) { }
+
+        protected override void Cancel(CloudSyncPipelineArgs args, Exception e = null)
         {
-            base.Cancel(args);
+            base.Cancel(args, e);
             args.ExitCode = 12;
         }
 
@@ -26,15 +28,28 @@ namespace CloudSyncUtil.App.Pipelines.Sync.Common
                 return;
             }
 
-            var stringMap = fileList.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
+            var stringMap = fileList.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
             var fileMap = new Dictionary<string, string>();
 
             foreach (var fileString in stringMap)
             {
-                var arr = fileString.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+                var arr = fileString.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-                var localPath = arr[0];
-                var cloudPath = arr[1];
+                string localPath, cloudPath;
+
+                // if we have specified a cloud folder name
+                if (arr.Length > 1)
+                {
+                    localPath = arr[0];
+                    cloudPath = arr[1];
+                }
+                else
+                {
+                    // enforce sam folder structure
+                    localPath = fileString;
+                    // assuming we have D://some_path/somepath/[name; *; **]
+                    cloudPath = fileString.Substring(4, fileString.Length - 4 - fileString.LastIndexOfAny(new[] { '/', '\\' }));
+                }
 
                 fileMap.Add(cloudPath, localPath);
             }

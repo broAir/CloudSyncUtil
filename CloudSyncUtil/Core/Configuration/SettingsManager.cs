@@ -13,7 +13,7 @@
 
         private SettingsManager()
         {
-            
+
         }
 
         public string GoogleUserName()
@@ -24,6 +24,11 @@
         public string GoogleFileList()
         {
             return ConfigurationManager.GetSettingValue<string>("Google.Files");
+        }
+
+        public string GoogleRootFolder()
+        {
+            return ConfigurationManager.GetSettingValue<string>("Google.DriveRootFolder");
         }
 
         public string GoogleFileDataStore()

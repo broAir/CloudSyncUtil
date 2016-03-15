@@ -18,11 +18,17 @@ namespace CloudSyncUtil.Core.Pipelines
         }
 
         // to set up error code and args.cancel
-        protected virtual void Cancel(TArgs args)
+        protected virtual void Cancel(TArgs args, Exception e = null)
         {
             args.Cancel = true;
             // generic error
             args.ExitCode = 999;
+
+            if (e != null)
+            {
+                args.Exception = e;
+                args.HasException = true;
+            }
         }
 
         protected abstract void DoProcess(TArgs args);

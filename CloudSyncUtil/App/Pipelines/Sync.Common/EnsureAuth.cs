@@ -10,9 +10,11 @@ namespace CloudSyncUtil.App.Pipelines.Sync.Common
 {
     public class EnsureAuth : CommonSyncProcessor
     {
-        protected override void Cancel(CloudSyncPipelineArgs args)
+        public EnsureAuth(int priority = 100) : base(priority) { }
+
+        protected override void Cancel(CloudSyncPipelineArgs args, Exception e = null)
         {
-            base.Cancel(args);
+            base.Cancel(args, e);
             args.ExitCode = 11;
         }
 
@@ -27,9 +29,9 @@ namespace CloudSyncUtil.App.Pipelines.Sync.Common
                     this.Cancel(args);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                this.Cancel(args);
+                this.Cancel(args, e);
             }
 
         }
