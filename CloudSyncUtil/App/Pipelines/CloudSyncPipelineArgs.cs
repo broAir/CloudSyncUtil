@@ -1,4 +1,5 @@
-﻿using CloudSyncUtil.Core.Integrations;
+﻿using CloudSyncUtil.Core.Files;
+using CloudSyncUtil.Core.Integrations;
 using CloudSyncUtil.Core.Pipelines;
 using System;
 using System.Collections.Generic;
@@ -21,5 +22,7 @@ namespace CloudSyncUtil.App.Pipelines
         public Dictionary<string, string> StringFileMap { get; set; }
 
         public Dictionary<CloudFile, string> CloudToStringMap { get; set; } 
+
+        public Dictionary<CloudFile, LocalFile> FailedFiles { get; set; }
     }
 }

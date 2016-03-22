@@ -1,4 +1,4 @@
-﻿using CloudSyncUtil.Core.Files;
+﻿using CloudSyncUtil.Core.FileSystem;
 using CloudSyncUtil.Core.Integrations;
 using System;
 using System.Collections.Generic;
@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace CloudSyncUtil.App.Pipelines.Sync.Common
 {
-    public class ProcessSingleWildcards : CommonWildcardProcessor
+    public class ProcessDeepWildcards : CommonWildcardProcessor
     {
-        public ProcessSingleWildcards(int priority = 500) : base("/*", priority) { }
-        
+        public ProcessDeepWildcards(int priority = 600) : base("/**", priority) { }
+
         protected override void ProcessEntry(KeyValuePair<CloudFile, string> cloudToFsPath)
         {
             try
@@ -22,8 +22,10 @@ namespace CloudSyncUtil.App.Pipelines.Sync.Common
                 var cloudFolder = cloudToFsPath.Key;
 
                 var files = Directory.GetFiles(fsPath);
-
                 files.ToList().ForEach(x => ProcessSingleFile(cloudFolder, x));
+
+                var folders = Directory.GetDirectories(fsPath);
+                this.ProcessFolders(folders);
             }
             catch (Exception e)
             {
@@ -31,6 +33,18 @@ namespace CloudSyncUtil.App.Pipelines.Sync.Common
                 throw;
             }
         }
+
+        protected void ProcessFolders(string[] folders)
+        {
+            folders
+                .Select(x =>
+                    new KeyValuePair<CloudFile, string>(cloudFolder, FileNameStringOperations.GetFolderName(x)))
+                .ToList()
+                .ForEach(x => ProcessFolder(x));
+            var folderName = cloudToFsPath.Value;
+            var parent = CloudRepository.CreateFolder(folderName, cloudToFsPath.Key)
+        }
+
         
     }
 }

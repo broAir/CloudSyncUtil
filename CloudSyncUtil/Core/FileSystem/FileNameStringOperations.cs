@@ -18,5 +18,10 @@ namespace CloudSyncUtil.Core.FileSystem
         {
             return Path.GetFileName(path);
         }
+
+        public static string GetFolderName(string path)
+        {
+            return new DirectoryInfo(path).Name;
+        }
     }
 }

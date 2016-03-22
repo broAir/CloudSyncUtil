@@ -110,7 +110,9 @@
   <ItemGroup>
     <Compile Include="App\Pipelines\CloudSyncPipelineArgs.cs" />
     <Compile Include="App\Pipelines\PipelineFactory.cs" />
+    <Compile Include="App\Pipelines\Sync.Common\CommonWildcardProcessor.cs" />
     <Compile Include="App\Pipelines\Sync.Common\EnsureSyncFolder.cs" />
+    <Compile Include="App\Pipelines\Sync.Common\ProcessDeepWildcards.cs" />
     <Compile Include="App\Pipelines\Sync.Common\ProcessSingleWildcards.cs" />
     <Compile Include="App\Pipelines\Sync.Common\CommonSyncProcessor.cs" />
     <Compile Include="App\Pipelines\Sync.Common\CreateCloudFolders.cs" />
