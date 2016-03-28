@@ -108,6 +108,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\Logging\CmdLogger.cs" />
     <Compile Include="App\Pipelines\CloudSyncPipelineArgs.cs" />
     <Compile Include="App\Pipelines\PipelineFactory.cs" />
     <Compile Include="App\Pipelines\Sync.Common\CommonWildcardProcessor.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Core\Integrations\CloudRepository.cs" />
     <Compile Include="Core\Integrations\IFileMapper.cs" />
     <Compile Include="Core\Files\LocalFile.cs" />
+    <Compile Include="Core\Logging\ILogger.cs" />
     <Compile Include="Core\Pipelines\Pipeline.cs" />
     <Compile Include="Core\Pipelines\PipelineArgs.cs" />
     <Compile Include="Core\Pipelines\Processor.cs" />
