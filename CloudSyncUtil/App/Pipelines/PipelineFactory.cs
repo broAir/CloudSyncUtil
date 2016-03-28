@@ -22,6 +22,7 @@ namespace CloudSyncUtil.App.Pipelines
             pipeline.AddProcessor(new ParseFilePaths(300));
             pipeline.AddProcessor(new CreateCloudFolders(400));
             pipeline.AddProcessor(new ProcessSingleWildcards(500));
+            pipeline.AddProcessor(new ProcessDeepWildcards(600));
 
             return pipeline;
         }

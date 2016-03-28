@@ -19,13 +19,13 @@ namespace CloudSyncUtil.App.Pipelines.Sync.Common
             {
                 // clr will put this array init to the top and declare it only once. no worries
                 var fsPath = cloudToFsPath.Value.TrimEnd(new[] { '*' });
+
                 var cloudFolder = cloudToFsPath.Key;
 
-                var files = Directory.GetFiles(fsPath);
-                files.ToList().ForEach(x => ProcessSingleFile(cloudFolder, x));
+                Directory.GetFiles(fsPath).ToList().ForEach(x => ProcessSingleFile(cloudFolder, x));
 
-                var folders = Directory.GetDirectories(fsPath);
-                this.ProcessFolders(folders);
+                Directory.GetDirectories(fsPath).ToList().ForEach(x => ProcessFolder(cloudFolder, x));
+
             }
             catch (Exception e)
             {
@@ -34,17 +34,16 @@ namespace CloudSyncUtil.App.Pipelines.Sync.Common
             }
         }
 
-        protected void ProcessFolders(string[] folders)
+        protected void ProcessFolder(CloudFile parent, string fsFolderPath)
         {
-            folders
-                .Select(x =>
-                    new KeyValuePair<CloudFile, string>(cloudFolder, FileNameStringOperations.GetFolderName(x)))
-                .ToList()
-                .ForEach(x => ProcessFolder(x));
-            var folderName = cloudToFsPath.Value;
-            var parent = CloudRepository.CreateFolder(folderName, cloudToFsPath.Key)
-        }
+            var cloudFolder = CloudRepository.CreateFolder(FileNameStringOperations.GetFolderName(fsFolderPath), parent);
 
+            // Upload inner files
+            Directory.GetFiles(fsFolderPath).ToList().ForEach(x => ProcessSingleFile(cloudFolder, x));
+
+            Directory.GetDirectories(fsFolderPath).ToList().ForEach(x => ProcessFolder(cloudFolder, x));
+        }
+                
         
     }
 }
